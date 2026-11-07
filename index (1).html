@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#e8228a">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Jee Treatment</title>
+<style>
+:root{--bg:#ffe9f4;--card:#fff;--ink:#4a1030;--mute:#8a4a69;--line:#ffc4e0;--main:#e8228a;--main-ink:#fff;--soft:#ffd2e8;--ring:#a30f62;--warn:#b3261e}
+@media(prefers-color-scheme:dark){:root{--bg:#1c1017;--card:#2a1822;--ink:#f8e6ee;--mute:#c3a0b0;--line:#432a38;--main:#f48fb1;--main-ink:#2a0f1b;--soft:#3a2230;--ring:#f8bbd0;--warn:#ff8a80}}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);padding-top:env(safe-area-inset-top,0)}
+main{max-width:560px;margin:0 auto;padding:18px 16px calc(96px + env(safe-area-inset-bottom,0))}
+header.brand{display:flex;justify-content:center;margin:2px 0 6px}header.brand svg{max-width:90%;height:auto}
+h1{font-size:1.5rem;margin:4px 0 14px;letter-spacing:-.01em}
+h2{font-size:1.05rem;margin:18px 0 8px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+label{display:block;font-size:.88rem;color:var(--mute);margin:12px 0 4px}
+input,textarea{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:11px 12px}
+input:focus,textarea:focus,button:focus-visible{outline:3px solid var(--ring);outline-offset:1px}
+textarea{min-height:76px;resize:vertical}
+button{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:12px 16px;background:var(--main);color:var(--main-ink);font-weight:600}
+button.alt{background:var(--soft);color:var(--ink)}
+button.bad{background:transparent;color:var(--warn);border:1px solid var(--line)}
+.row{display:flex;gap:8px;flex-wrap:wrap}.row>*{flex:1}
+.price{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.price b{font-size:1.4rem}
+.big{font-size:2rem;font-weight:700;letter-spacing:-.02em}
+.mute{color:var(--mute);font-size:.9rem}
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0))}
+nav button{flex:1;background:none;color:var(--mute);padding:8px 4px;border-radius:10px;font-size:.85rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+nav button svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+nav button.on{color:var(--main-ink);background:var(--main)}
+.tabs{display:flex;gap:6px;margin-bottom:12px}
+.tabs button{flex:1;padding:9px 4px;background:var(--soft);color:var(--ink);font-size:.9rem}
+.tabs button.on{background:var(--main);color:var(--main-ink)}
+.nota{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.92rem;border:1px dashed var(--mute);border-radius:12px;padding:16px;background:var(--card)}
+.nota h3{text-align:center;margin:0 0 4px;font-size:1.1rem}
+.nota .ln{display:flex;justify-content:space-between;gap:12px;padding:3px 0}
+.nota hr{border:0;border-top:1px dashed var(--mute);margin:10px 0}
+.item{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.item:last-child{border-bottom:0}
+.item.sel{background:var(--soft);margin:0 -8px;padding:10px 8px;border-radius:8px}
+.empty{text-align:center;color:var(--mute);padding:22px 8px}
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:.9rem;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.show{opacity:1}
+.pager{display:flex;align-items:center;gap:8px}.pager>div{flex:1;text-align:center}.pager button{flex:none;width:44px;padding:8px 0;font-size:1.3rem;line-height:1}.pager button:disabled{opacity:.35;cursor:default}
+.sec{display:none}.sec.on{display:block}
+
+/* Animasi */
+@keyframes masuk{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes dariKiri{from{opacity:0;transform:translateX(-36px)}to{opacity:1;transform:none}}
+@keyframes dariKanan{from{opacity:0;transform:translateX(36px)}to{opacity:1;transform:none}}
+@keyframes muncul{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+.sec.on{animation:masuk .4s cubic-bezier(.2,.7,.2,1)}
+.sec.on .card{animation:masuk .45s cubic-bezier(.2,.7,.2,1) both}
+.sec.on .card:nth-of-type(2){animation-delay:.06s}
+.nota{animation:muncul .35s cubic-bezier(.2,.7,.2,1)}
+#konfirmasi:not([hidden]){animation:muncul .25s cubic-bezier(.2,.7,.2,1)}
+.geserKiri{animation:dariKiri .35s cubic-bezier(.2,.7,.2,1)!important}
+.geserKanan{animation:dariKanan .35s cubic-bezier(.2,.7,.2,1)!important}
+button{transition:transform .15s ease,background-color .25s ease,color .25s ease,opacity .25s ease}
+button:active:not(:disabled){transform:scale(.95)}
+nav button.on svg{animation:muncul .3s cubic-bezier(.2,.7,.2,1)}
+.item{transition:background-color .25s ease}
+.toast{transform:translate(-50%,14px);transition:opacity .25s ease,transform .3s cubic-bezier(.2,.7,.2,1)}
+.toast.show{transform:translate(-50%,0)}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+<header class="brand"><svg viewBox="0 0 440 96" width="262" height="57" style="overflow:visible" role="img" aria-label="Jee Treatment"><g transform="translate(8 26) scale(.32) translate(-150 -92)"><g fill="#ff9ccb"><path d="M256 92C302 142 302 202 256 242C210 202 210 142 256 92Z" transform="rotate(-44 256 242)"/><path d="M256 92C302 142 302 202 256 242C210 202 210 142 256 92Z" transform="rotate(44 256 242)"/></g><path d="M256 92C302 142 302 202 256 242C210 202 210 142 256 92Z" fill="var(--main)"/></g><text x="90" y="62" font-family="'Segoe UI',Roboto,Arial,sans-serif" font-size="46" fill="var(--main)"><tspan font-weight="700">Jee</tspan><tspan font-weight="300" dx="10">Treatment</tspan></text></svg></header>
+
+<section id="massage" class="sec on">
+    <div class="card">
+    <div class="price"><div><div class="mute">Price</div><b id="hargaTampil"></b><div class="mute" style="font-size:.82rem">(belum termasuk ongkir)</div></div><button class="alt" id="btnUbah" type="button">Ubah harga</button></div>
+    <div id="editHarga" hidden>
+      <label for="hargaBaru">Harga baru (Rp)</label>
+      <input id="hargaBaru" type="number" inputmode="numeric" min="0" step="1000">
+      <div class="row" style="margin-top:10px"><button id="simpanHarga" type="button">Simpan harga</button><button class="alt" id="batalHarga" type="button">Batal</button></div>
+      <p class="mute">Harga baru hanya berlaku untuk catatan berikutnya. Nota lama tidak berubah.</p>
+    </div>
+  </div>
+  <div class="card">
+    <label for="nama" style="margin-top:0">Nama</label>
+    <input id="nama" autocomplete="off">
+    <label for="alamat">Alamat</label>
+    <textarea id="alamat"></textarea>
+    <label>Tanggal nota</label>
+    <div class="tabs" id="pilihHari" style="margin-bottom:6px"><button type="button" data-off="-1">Kemarin</button><button type="button" data-off="0" class="on">Hari ini</button><button type="button" data-off="1">Besok</button></div>
+    <div class="mute" id="infoHari" style="text-align:center"></div>
+    <div class="row" style="margin-top:14px"><button id="simpan" type="button">Simpan dan buat nota</button></div>
+  </div>
+</section>
+
+<section id="nota" class="sec">
+  <h1>Nota</h1>
+  <div id="notaBox"></div>
+  <h2>Nota terbaru</h2>
+  <div class="card" id="daftarNota"></div>
+</section>
+
+<section id="uang" class="sec">
+  <h1>Penghasilan</h1>
+  <div class="tabs" role="tablist" id="tabs">
+    <button data-p="harian" class="on">Harian</button>
+    <button data-p="mingguan">Mingguan</button>
+    <button data-p="bulanan">Bulanan</button>
+    <button data-p="tahunan">Tahunan</button>
+  </div>
+  <div class="card" id="lapKartu">
+    <div class="pager"><button class="alt" id="prev" type="button" aria-label="Sebelumnya">‹</button><div class="mute" id="lapJudul"></div><button class="alt" id="next" type="button" aria-label="Berikutnya">›</button></div>
+    <div class="big" id="lapTotal" style="text-align:center;margin-top:8px"></div>
+    <div class="mute" id="lapJumlah" style="text-align:center"></div>
+    <div class="mute" style="text-align:center;margin-top:6px;font-size:.82rem">Geser ke kanan untuk melihat sebelumnya</div>
+    <div class="row" style="margin-top:12px"><button class="alt" id="refresh" type="button">Refresh laporan</button></div>
+  </div>
+  
+</section>
+
+</main>
+
+<nav>
+  <button data-v="massage" class="on" aria-label="Massage"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.6-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.400-7 10-7 10z"/></svg></button>
+  <button data-v="nota"><svg viewBox="0 0 24 24"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg>Nota</button>
+  <button data-v="uang"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>Penghasilan</button>
+</nav>
+<div class="toast" id="toast"></div>
+
+<script>
+const WA="6289676432662", KEY="catatan-massage-v1", $=id=>document.getElementById(id);
+const rp=n=>"Rp "+Number(n).toLocaleString("id-ID");
+let data=load(), periode="harian", dipilih=null;
+
+function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&Array.isArray(d.items))return d}catch(e){}return{harga:120000,items:[]}}
+function simpanData(){try{localStorage.setItem(KEY,JSON.stringify(data))}catch(e){toast("Penyimpanan penuh atau diblokir")}}
+function toast(t){const e=$("toast");e.textContent=t;e.classList.add("show");setTimeout(()=>e.classList.remove("show"),2200)}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+
+function waktu(ts){
+  const d=new Date(ts),o={timeZone:"Asia/Jakarta"};
+  const g=(opt)=>d.toLocaleDateString("id-ID",{...o,...opt});
+  return{hari:g({weekday:"long"}),tanggal:g({day:"numeric"}),bulan:g({month:"long"}),tahun:g({year:"numeric"}),
+    jam:d.toLocaleTimeString("id-ID",{...o,hour:"2-digit",minute:"2-digit",hour12:false}).replace(".",":")};
+}
+
+/* Navigasi */
+function buka(v){
+  document.querySelectorAll(".sec").forEach(s=>s.classList.toggle("on",s.id===v));
+  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
+  if(v==="nota")tampilNota();
+  if(v==="uang"){offset=0;tampilLaporan()}
+  window.scrollTo(0,0);
+}
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>buka(b.dataset.v));
+
+/* Harga */
+function tampilHarga(){$("hargaTampil").textContent=rp(data.harga)}
+$("btnUbah").onclick=()=>{$("editHarga").hidden=false;$("hargaBaru").value=data.harga;$("hargaBaru").focus()};
+$("batalHarga").onclick=()=>$("editHarga").hidden=true;
+$("simpanHarga").onclick=()=>{
+  const v=Math.round(Number($("hargaBaru").value));
+  if(!(v>0))return toast("Isi harga lebih dari 0");
+  data.harga=v;simpanData();tampilHarga();$("editHarga").hidden=true;toast("Harga diperbarui");
+};
+
+/* Pilihan tanggal nota */
+let selisih=0;
+function tglPilih(){const d=new Date();d.setDate(d.getDate()+selisih);return d}
+function infoHari(){$("infoHari").textContent=tglPilih().toLocaleDateString("id-ID",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}
+function setHari(n){selisih=n;document.querySelectorAll("#pilihHari button").forEach(b=>b.classList.toggle("on",Number(b.dataset.off)===n));infoHari()}
+document.querySelectorAll("#pilihHari button").forEach(b=>b.onclick=()=>setHari(Number(b.dataset.off)));
+
+/* Simpan massage */
+$("simpan").onclick=()=>{
+  const nama=$("nama").value.trim(),alamat=$("alamat").value.trim();
+  if(!nama)return toast("Isi nama dulu");
+  if(!alamat)return toast("Isi alamat dulu");
+  const it={id:Date.now(),nama,alamat,harga:data.harga,ts:tglPilih().getTime()};
+  data.items.push(it);simpanData();
+  $("nama").value="";$("alamat").value="";setHari(0);
+  dipilih=it.id;buka("nota");toast("Tersimpan");
+};
+
+/* Nota */
+function teksNota(it){
+  const w=waktu(it.ts);
+  return `*NOTA JEE TREATMENT*\n\nHari: ${w.hari}\nTanggal: ${w.tanggal}\nBulan: ${w.bulan}\nTahun: ${w.tahun}\nJam: ${w.jam} WIB\n\nNama: ${it.nama}\nAlamat: ${it.alamat}\n\nMassage: ${rp(it.harga)}\n*Total: ${rp(it.harga)}*\n\nTerima kasih.`;
+}
+function tampilNota(){
+  const urut=[...data.items].sort((a,b)=>b.ts-a.ts);
+  const it=urut.find(x=>x.id===dipilih)||urut[0];
+  if(!it){$("notaBox").innerHTML='<div class="card empty">Belum ada nota. Buat yang pertama lewat menu hati.</div>';$("daftarNota").innerHTML='<div class="empty">Belum ada nota.</div>';return}
+  dipilih=it.id;
+  const w=waktu(it.ts);
+  $("notaBox").innerHTML=`<div class="nota"><h3>NOTA JEE TREATMENT</h3><hr>
+    <div class="ln"><span>Hari</span><span>${w.hari}</span></div>
+    <div class="ln"><span>Tanggal</span><span>${w.tanggal}</span></div>
+    <div class="ln"><span>Bulan</span><span>${w.bulan}</span></div>
+    <div class="ln"><span>Tahun</span><span>${w.tahun}</span></div>
+    <div class="ln"><span>Jam</span><span>${w.jam} WIB</span></div><hr>
+    <div class="ln"><span>Nama</span><span>${esc(it.nama)}</span></div>
+    <div class="ln"><span>Alamat</span><span style="text-align:right">${esc(it.alamat)}</span></div><hr>
+    <div class="ln"><span>Massage</span><span>${rp(it.harga)}</span></div>
+    <div class="ln"><b>Total</b><b>${rp(it.harga)}</b></div></div>
+    <div class="row" style="margin:12px 0 4px"><button id="kirim" type="button">Kirim nota ke WhatsApp</button><button class="bad" id="hapus" type="button">Hapus nota</button></div>
+    <div id="konfirmasi" hidden class="card" style="margin-top:10px"><div style="margin-bottom:10px"><b>Hapus nota ini?</b><div class="mute">Penghasilan juga ikut berkurang. Tidak bisa dibatalkan.</div></div><div class="row"><button class="bad" id="yaHapus" type="button">Ya, hapus</button><button class="alt" id="batalHapus" type="button">Batal</button></div></div>`;
+  $("kirim").onclick=()=>{const u=`https://wa.me/${WA}?text=${encodeURIComponent(teksNota(it))}`;if(window.Capacitor)location.href=u;else window.open(u,"_blank")};
+  $("hapus").onclick=()=>{
+    $("konfirmasi").hidden=false;$("hapus").hidden=true;$("kirim").hidden=true;
+  };
+  $("batalHapus").onclick=()=>{$("konfirmasi").hidden=true;$("hapus").hidden=false;$("kirim").hidden=false};
+  $("yaHapus").onclick=()=>{
+    data=load();
+    data.items=data.items.filter(x=>String(x.id)!==String(it.id));
+    dipilih=null;simpanData();tampilNota();toast("Nota dihapus");
+  };
+  $("daftarNota").innerHTML=urut.slice(0,20).map(x=>{const t=waktu(x.ts);
+    return `<div class="item${x.id===it.id?" sel":""}" data-id="${x.id}"><div><b>${esc(x.nama)}</b><div class="mute">${t.hari}, ${t.tanggal} ${t.bulan} ${t.tahun} · ${t.jam}</div></div><b>${rp(x.harga)}</b></div>`}).join("");
+  document.querySelectorAll("#daftarNota .item").forEach(e=>e.onclick=()=>{dipilih=Number(e.dataset.id);tampilNota();window.scrollTo(0,0)});
+}
+
+/* Laporan: dihitung ulang dari data setiap dibuka. offset 0 = periode ini, -1 = sebelumnya, dst. */
+let offset=0,arah=0,angkaLama=0,tok=0;
+const kurangGerak=matchMedia("(prefers-reduced-motion: reduce)").matches;
+function animAngka(ke){
+  const el=$("lapTotal"),dari=angkaLama,id=++tok;angkaLama=ke;
+  if(kurangGerak||dari===ke){el.textContent=rp(ke);return}
+  const t0=performance.now();
+  (function f(t){if(id!==tok)return;const p=Math.min(1,(t-t0)/550),e=1-Math.pow(1-p,3);el.textContent=rp(Math.round(dari+(ke-dari)*e));if(p<1)requestAnimationFrame(f)})(t0);
+}
+function efekGeser(){
+  const k=$("lapKartu");k.classList.remove("geserKiri","geserKanan");
+  if(!arah)return;void k.offsetWidth;k.classList.add(arah<0?"geserKiri":"geserKanan");arah=0;
+}
+const L=(d,o)=>d.toLocaleDateString("id-ID",o);
+function rentang(p,off){
+  const n=new Date(),y=n.getFullYear(),m=n.getMonth(),t=n.getDate();
+  if(p==="harian")return[new Date(y,m,t+off),new Date(y,m,t+off+1)];
+  if(p==="mingguan"){const a=new Date(y,m,t-((n.getDay()+6)%7)+off*7);return[a,new Date(a.getFullYear(),a.getMonth(),a.getDate()+7)]}
+  if(p==="bulanan")return[new Date(y,m+off,1),new Date(y,m+off+1,1)];
+  return[new Date(y+off,0,1),new Date(y+off+1,0,1)];
+}
+function judulPeriode(a,b){
+  if(periode==="harian")return offset===0?"Hari ini · "+L(a,{weekday:"long",day:"numeric",month:"long",year:"numeric"}):offset===-1?"Kemarin · "+L(a,{weekday:"long",day:"numeric",month:"long",year:"numeric"}):L(a,{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+  if(periode==="mingguan"){const e=new Date(b.getFullYear(),b.getMonth(),b.getDate()-1);return(offset===0?"Minggu ini · ":"")+L(a,{day:"numeric",month:"short"})+" – "+L(e,{day:"numeric",month:"short",year:"numeric"})}
+  if(periode==="bulanan")return L(a,{month:"long",year:"numeric"});
+  return "Tahun "+a.getFullYear();
+}
+function tampilLaporan(){
+  const[a,b]=rentang(periode,offset);
+  const besok=new Date();besok.setHours(24,0,0,0);
+  const list=data.items.filter(x=>x.ts>=a.getTime()&&x.ts<Math.min(b.getTime(),besok.getTime()));
+  const total=list.reduce((s,x)=>s+x.harga,0);
+  $("lapJudul").textContent=judulPeriode(a,b);
+  animAngka(total);efekGeser();
+  $("lapJumlah").textContent=`${list.length} massage`;
+  $("next").disabled=offset>=0;
+}
+function geser(d){if(d>0&&offset>=0)return;offset+=d;arah=d;tampilLaporan()}
+$("prev").onclick=()=>geser(-1);
+$("next").onclick=()=>geser(1);
+document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{
+  periode=b.dataset.p;offset=0;document.querySelectorAll("#tabs button").forEach(x=>x.classList.toggle("on",x===b));tampilLaporan();
+});
+$("refresh").onclick=()=>{data=load();offset=0;tampilLaporan();tampilHarga();toast("Laporan diperbarui")};
+let sx=0,sy=0;
+$("uang").addEventListener("touchstart",e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});
+$("uang").addEventListener("touchend",e=>{
+  const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;
+  if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5)geser(dx>0?-1:1);
+});
+document.addEventListener("visibilitychange",()=>{if(!document.hidden){data=load();tampilHarga();if($("uang").classList.contains("on"))tampilLaporan();if($("nota").classList.contains("on"))tampilNota()}});
+
+/* Refresh otomatis saat ganti hari */
+let hariIni=new Date().toDateString();
+function cekGantiHari(){
+  const k=new Date().toDateString();
+  if(k===hariIni)return;
+  hariIni=k;offset=0;data=load();tampilHarga();infoHari();
+  if($("uang").classList.contains("on")){tampilLaporan();toast("Hari berganti, laporan diperbarui")}
+}
+setInterval(cekGantiHari,15000);
+addEventListener("focus",cekGantiHari);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)cekGantiHari()});
+
+tampilHarga();infoHari();
+if("serviceWorker"in navigator&&!window.Capacitor)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+</script>
+</body>
+</html>
