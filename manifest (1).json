@@ -1,0 +1,15 @@
+{
+  "name": "Jee Treatment",
+  "short_name": "Jee Treatment",
+  "description": "Catat massage, kirim nota, dan lihat penghasilan",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ffe9f4",
+  "theme_color": "#e8228a",
+  "lang": "id",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+  ]
+}
